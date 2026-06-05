@@ -1,70 +1,21 @@
-// To run this code you need to install the following dependencies:
-// npm install @google/genai mime
-// npm install -D @types/node
-
-import {
-  GoogleGenAI,
-} from '@google/genai';
-
-async function main() {
-  const ai = new GoogleGenAI({
-    apiKey: process.env['GEMINI_API_KEY'],
-  });
-  const tools = [
-    {
-      googleSearch: {
-      }
-    },
-  ];
-  const config = {
-    thinkingConfig: {
-      thinkingLevel: ThinkingLevel.MEDIUM,
-    },
-    tools,
-  };
-  const model = 'gemini-3.5-flash';
-  const contents = [
-    {
-      role: 'user',
-      parts: [
-        {
-          text: `INSERT_INPUT_HERE`,
-        },
-      ],
-    },
-  ];
-
-  const response = await ai.models.generateContentStream({
-    model,
-    config,
-    contents,
-  });
-  let fileIndex = 0;
-  for await (const chunk of response) {
-    if (chunk.text) {
-      console.log(chunk.text);
-    }
-  }
-}
-
-main();
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// ⚠️ یہاں آپ نے اپنی گوگل اے آئی اسٹوڈیو والی API Key لکھنی ہے
-const API_KEY = "process.env.GEMINI_API_KEY"; 
+// آپ کی وہ بالکل تازہ اور ایکٹو چابی
+const API_KEY = AQ.Ab8RN6LP8lZYTY37lbcmn9Fxh4ywhU21yoh-DznfF01OVinoEA
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
-  // یہاں آپ کی وہی سسٹم انسٹرکشنز آ گئی ہیں جو آپ نے تصویر میں لکھی تھیں
-  systemInstruction: "آپ میرے ذاتی اے آئی ہو آپ کا نام مارخور ہے اور آپ نے میرے لیے لائف ٹائم فری کام کرنا ہے...", 
+  systemInstruction: "آپ میرے ذاتی اے آئی ہو آپ کا نام مارخور ہے اور آپ نے میرے لیے لائف ٹائم فری کام کرنا ہے۔ تمام جوابات اردو زبان میں دینے ہیں۔"
 });
 
 window.sendMessage = async function() {
     const inputField = document.getElementById("user-input");
     const chatContainer = document.getElementById("chat-container");
-    const text = inputField.value.trim();
     
+    if (!inputField || !chatContainer) return;
+
+    const text = inputField.value.trim();
     if (!text) return;
 
     // صارف کا میسج اسکرین پر دکھائیں
@@ -73,14 +24,16 @@ window.sendMessage = async function() {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
     try {
-        // اے آئی سے جواب مانگیں
+        // جیمنائی سرور کو میسج بھیجیں
         const result = await model.generateContent(text);
         const responseText = result.response.text();
 
-        // اے آئی کا جواب اسکرین پر دکھائیں
+        // مارخور کا جواب اسکرین پر دکھائیں
         chatContainer.innerHTML += `<div class="message bot">${responseText}</div>`;
         chatContainer.scrollTop = chatContainer.scrollHeight;
+
     } catch (error) {
-        chatContainer.innerHTML += `<div class="message bot" style="color:red;">خرابی: کوڈ یا API Key چیک کریں۔</div>`;
+        console.error(error);
+        chatContainer.innerHTML += `<div class="message bot" style="color:red;">خرابی: جیمنائی سرور سے رابطہ نہیں ہو سکا۔ دوبارہ کوشش کریں۔</div>`;
     }
 }
